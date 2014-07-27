@@ -81,8 +81,6 @@ void SI4707::begin(void)
   
   pinMode(INT, INPUT);                           //  Setup the interrupt pin.
   digitalWrite(INT, HIGH);
-  
-  Wire.begin();
 }  
 //
 //  Powers up the Si4707.
