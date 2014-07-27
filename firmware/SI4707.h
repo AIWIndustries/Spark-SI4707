@@ -21,20 +21,13 @@
 #define SI4707_h
 //
 #include "application.h"
-#include "Arduino.h"
+//#include "Arduino.h"
 #include "SI4707_DEFINITIONS.h"
 //
 //  Arduino definitions.
 //
-#ifndef NO_INTERRUPTS()
-#define NO_INTERRUPTS()           uint8_t sreg = SREG; cli()
-#define INTERRUPTS()              SREG = sreg
-#endif
-//
-#ifndef TIMER1_START()
-#define TIMER1_START()            TCNT1 = 0x00; TCCR1B |= (1 << WGM12 | 1 << CS12 | 1 << CS10); timer = 0;
-#define TIMER1_STOP()             TCCR1B = 0x00
-#endif
+#define lowByte(w) ((uint8_t) ((w) & 0xff))
+#define highByte(w) ((uint8_t) ((w) >> 8))
 //
 #define INT                               2      //  Arduino Interrupt input pin.
 #define RST                               4      //  Arduino pin used to reset the Si4707.
