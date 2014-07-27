@@ -21,13 +21,12 @@
 #define SI4707_PATCH_h
 //
 #include <inttypes.h>
-#include <avr/pgmspace.h>
 //
 #define PATCH_DATA_LENGTH                36      //  Number of lines of code in the patch.
 //
 //  SI4707 Patch Data.
 //
-static const uint8_t __attribute__ ((progmem)) SI4707_PATCH_DATA[PATCH_DATA_LENGTH * 8] =  
+const uint8_t SI4707_PATCH_DATA[PATCH_DATA_LENGTH * 8] =  
 { 
   0x15, 0x00, 0x00, 0x04, 0xAE, 0x4D, 0x24, 0xBA,
   0x16, 0x37, 0xB1, 0x23, 0xAC, 0x00, 0x00, 0x00,
