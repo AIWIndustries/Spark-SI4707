@@ -1,0 +1,7 @@
+{
+  "name": "Si4707,
+  "author": "Richard Vogel <aiwindustries@gmail.com>",
+  "license": "GPL v2",
+  "version": "0.0.1",
+  "description": "A library that allows Spark IO integration with Si4707 NWR Receiver_SAME Decoder"
+}
