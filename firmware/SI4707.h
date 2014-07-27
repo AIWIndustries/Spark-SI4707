@@ -20,6 +20,7 @@
 #ifndef SI4707_h
 #define SI4707_h
 //
+#include "application.h"
 #include "Arduino.h"
 #include "SI4707_DEFINITIONS.h"
 //
