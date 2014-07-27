@@ -19,7 +19,7 @@
 */
 #include "SI4707.h"
 #include "SI4707_PATCH.h"
-#include "Wire.h"
+//#include "Wire.h"
 //
 //  Global Status Bytes.
 //
@@ -59,10 +59,6 @@ uint16_t sameTime;
 uint8_t sameWat = 0x02;
 uint8_t response[15];
 //
-//  Timer 1 Variables.
-//
-volatile uint8_t sreg;
-volatile uint8_t timer;
 //
 //  Static Class Variables.
 //
@@ -78,8 +74,6 @@ uint8_t SI4707::rxBufferLength;
 //
 void SI4707::begin(void)
 {
-  NO_INTERRUPTS();                               //  Disable interrupts.
-    
   pinMode(RST, OUTPUT);                          //  Setup the reset pin.
   digitalWrite(RST, LOW);                        //  Reset the Si4707. 
   delay(CMD_DELAY); 
@@ -87,37 +81,6 @@ void SI4707::begin(void)
   
   pinMode(INT, INPUT);                           //  Setup the interrupt pin.
   digitalWrite(INT, HIGH);
-  
-  ADCSRA = 0x00;                                 //  Disable the analog comparator.
-
-#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)
-  EICRA = 0x00;
-  EICRA |= (1 << ISC01);                         //  Setup Interrupt 0 for FALLING edge.
-  EIFR  |= (1 << INTF0);                         //  Clear pending interrupts.
-  EIMSK |= (1 << INT0);                          //  Enable Interrupt 0.
-#elif defined (__AVR_ATmega1280__) || defined (__AVR_ATmega2560__)
-  EICRB = 0x00;
-  EICRB |= (1 << ISC41);                         //  Setup Interrupt 4 for FALLING edge.
-  EIFR  |= (1 << INTF4);                         //  Clear pending interrupts.
-  EIMSK |= (1 << INT4);                          //  Enable Interrupt 4.
-#endif    
-  
-  TCCR1A = 0x00;                                 //  Reset TCCR1A to Normal mode.
-  TCCR1B = 0x00;                                 //  Reset TCCR1B. 
-  TIFR1 = (1 << OCF1B | 1 << OCF1A | 1 << TOV1); //  Clear pending interrupts.
-
-#if F_CPU == 16000000UL                          //  16 MHz clock.
-  OCR1A = 0x3D08;                                //  Compare Match at 1 second.
-#elif F_CPU == 8000000UL                         //  8 MHz clock.
-  OCR1A = 0x1E83;                                //  Compare Match at 1 second.
-#endif
-
-  TIMSK1 = 0x00;                                 //  Reset TIMSK1.
-  TIMSK1 |= (1 << OCIE1A);                       //  Timer 1 Compare Match A Interrupt Enable. 
-    
-  TCCR2B = 0x00;                                 //  Stop Timer 2.  
-    
-  INTERRUPTS();                                  // Enable Global Interrupts.
   
   Wire.begin();
 }  
@@ -316,7 +279,7 @@ void SI4707::getSameStatus(uint8_t mode)
   if (!(sameStatus & HDRRDY))                    //  If no HDRRDY, return.
     return;
     
-  TIMER1_START();                                //  Start/Re-start the 6 second timer.
+  //TIMER1_START();                                //  Start/Re-start the 6 second timer.
   
   sameHeaderCount++;
       
@@ -601,7 +564,7 @@ void SI4707::sameParse(void)
 //
 void SI4707::sameFlush(void)
 {
-  TIMER1_STOP();
+  //TIMER1_STOP();
   
   getSameStatus(CLRBUF | INTACK);
   
@@ -708,7 +671,7 @@ void SI4707::readBurst(int quantity)
   delay(CMD_DELAY);
 }
 //
-//  Interrupt 0 or 4 Service Routine - Triggered on the Falling edge.
+/*  Interrupt 0 or 4 Service Routine - Triggered on the Falling edge.
 //
 #if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)     //  Interrupt 0.
 ISR(INT0_vect)
@@ -731,7 +694,7 @@ ISR(TIMER1_COMPA_vect, ISR_NOBLOCK)
     Radio.sameFlush();
   
   SREG = sreg;
-}  
+}  */
 //
 //
 //
