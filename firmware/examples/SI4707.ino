@@ -11,7 +11,7 @@
   
 */
 #include "SI4707.h"
-#include "Wire.h"
+
 //
 //  Global Variables.
 //
@@ -29,7 +29,10 @@ void setup()
   delay(1000);
   showMenu();
   delay(1000);
+  noInterrupts();
   Radio.begin();
+  interrupts();
+  Wire.begin();
   Radio.patch();          //  Use this one to to include the 1050 Hz patch.
   //Radio.on();           //  Use this one if not using the patch.
   //Radio.getRevision();  //  Only captured on the logic analyzer - not displayed.
@@ -56,6 +59,8 @@ void setup()
 //
 //  Tune to the desired frequency.
 //
+  attachInterrupt(D2, getStatus, FALLING);
+  delay(1000);
   Radio.tune(162550);  //  6 digits only.
 }  
 //
