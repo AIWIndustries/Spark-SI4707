@@ -9,9 +9,10 @@
   You must set your own startup frequency in setup().
   You must enable the interrupts that you want in setup().
   
+  I've added some Spark D7 LED operations just so I know how far the code is getting during setup while testing.
+  
 */
 #include "SI4707.h"
-
 //
 //  Global Variables.
 //
@@ -27,41 +28,62 @@ void setup()
   Serial.println(F("Starting up the Si4707......."));
   Serial.println();
   delay(1000);
+  pinMode(D7, OUTPUT);                         
+  digitalWrite(D7, HIGH);                        
+  digitalWrite(D7, LOW);
   showMenu();
   delay(1000);
   noInterrupts();
   Radio.begin();
+  digitalWrite(D7, HIGH);                      
+  delay(500); 
+  digitalWrite(D7, LOW);
   interrupts();
+  delay(20);
   Wire.begin();
+  delay(20);
   Radio.patch();          //  Use this one to to include the 1050 Hz patch.
+  digitalWrite(D7, HIGH);                         
+  delay(500); 
+  digitalWrite(D7, LOW);
   //Radio.on();           //  Use this one if not using the patch.
+  delay(500);
   //Radio.getRevision();  //  Only captured on the logic analyzer - not displayed.
 //  
 //  All useful interrupts are enabled here.
 //
   Radio.setProperty(GPO_IEN, (CTSIEN | ERRIEN | RSQIEN | SAMEIEN | ASQIEN | STCIEN));
+  delay(500);
 //  
 //  RSQ Interrupt Sources.
 //
-  Radio.setProperty(WB_RSQ_SNR_HIGH_THRESHOLD, 0x007F);   // 127 dBuV for testing..want it high                                      
-  Radio.setProperty(WB_RSQ_SNR_LOW_THRESHOLD, 0x0001);    // 1 dBuV for testing                                   
-  Radio.setProperty(WB_RSQ_RSSI_HIGH_THRESHOLD, 0x004D);  // -30 dBm for testing                                     
-  Radio.setProperty(WB_RSQ_RSSI_LOW_THRESHOLD, 0x0007);   // -100 dBm for testing                                      
+  //Radio.setProperty(WB_RSQ_SNR_HIGH_THRESHOLD, 0x007F);   // 127 dBuV for testing..want it high                                      
+  //Radio.setProperty(WB_RSQ_SNR_LOW_THRESHOLD, 0x0001);    // 1 dBuV for testing                                   
+  //Radio.setProperty(WB_RSQ_RSSI_HIGH_THRESHOLD, 0x004D);  // -30 dBm for testing                                     
+  //Radio.setProperty(WB_RSQ_RSSI_LOW_THRESHOLD, 0x0007);   // -100 dBm for testing                                      
   //Radio.setProperty(WB_RSQ_INT_SOURCE, (SNRHIEN | SNRLIEN | RSSIHIEN | RSSILIEN));    
 //
 //  SAME Interrupt Sources.
 //
   Radio.setProperty(WB_SAME_INTERRUPT_SOURCE, (EOMDETIEN | HDRRDYIEN));
+  delay(500);
 //
 //  ASQ Interrupt Sources.
 //
   Radio.setProperty(WB_ASQ_INT_SOURCE, (ALERTOFIEN | ALERTONIEN));
+  delay(500);
 //
 //  Tune to the desired frequency.
 //
-  attachInterrupt(INT, getStatus, FALLING);
+  attachInterrupt(D2, getStatus, FALLING);
+  digitalWrite(D7, HIGH);                       
+  delay(500); 
+  digitalWrite(D7, LOW);
   delay(1000);
   Radio.tune(162550);  //  6 digits only.
+  delay(500);
+  digitalWrite(D7, HIGH);                       
+  attachInterrupt(D2, getStatus, FALLING);
 }  
 //
 //  Main Loop.
