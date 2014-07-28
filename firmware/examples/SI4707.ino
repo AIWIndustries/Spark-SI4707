@@ -1,4 +1,4 @@
- /*
+/*
   
   Si4707 Basic Demonstration Program.
     
@@ -59,7 +59,7 @@ void setup()
 //
 //  Tune to the desired frequency.
 //
-  attachInterrupt(D2, getStatus, FALLING);
+  attachInterrupt(INT, getStatus, FALLING);
   delay(1000);
   Radio.tune(162550);  //  6 digits only.
 }  
