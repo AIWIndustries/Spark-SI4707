@@ -26,11 +26,11 @@
 //
 //  Arduino definitions.
 //
-#define lowByte(w) ((uint8_t) ((w) & 0xff))
-#define highByte(w) ((uint8_t) ((w) >> 8))
-//
-#define INT                               2      //  Arduino Interrupt input pin.
-#define RST                               4      //  Arduino pin used to reset the Si4707.
+#define lowByte(w) ((uint8_t) ((w) & 0xff)) //from Arduino.h
+#define highByte(w) ((uint8_t) ((w) >> 8))  //from Arduino.h
+
+#define INT                               D2      //  Arduino Interrupt input pin.
+#define RST                               D4      //  Arduino pin used to reset the Si4707.
 #define ON 		                         0x01      //  Used for Power/Mute On.
 #define OFF 	                         0x00      //  Used for Power/Mute Off.
 #define CMD_DELAY	                        2      //  Inter-Command delay (301 usec).
