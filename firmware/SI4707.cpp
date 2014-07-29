@@ -20,6 +20,7 @@
 #include "SI4707.h"
 #include "inttypes.h"
 //
+//
 /*Si4707 1050 Hz False Detection Patch.
  
   Description:  The device may falsely detect a 1050 Hz tone on weather band stations that
@@ -135,8 +136,8 @@ void SI4707::begin(void)
   delay(CMD_DELAY); 
   digitalWrite(RST, HIGH);
   
-  pinMode(INT, INPUT);                           //  Setup the interrupt pin.
-  digitalWrite(INT, HIGH);
+  pinMode(INT, INPUT_PULLUP);                           //  Setup the interrupt pin.
+  //digitalWrite(INT, HIGH);
 }  
 //
 //  Powers up the Si4707.
@@ -165,6 +166,26 @@ void SI4707::getRevision(void)
 {
   writeCommand(GET_REV);
   readBurst(9);
+  delay(10);
+  char partNumber[] = "Si470";
+  int pN = int(response[1]);
+  Serial.print(F("Part Number: "));
+  Serial.print(partNumber);
+  Serial.println(pN);
+  Serial.print(F("Major Firmware Revision: 0x"));
+  Serial.println(response[2], HEX);
+  Serial.print(F("Minor Firmware Revision: 0x"));
+  Serial.println(response[3], HEX);
+  uint16_t pID = (response[4] << 8 | response[5]);
+  Serial.print(F("Patch ID: 0x"));
+  Serial.println(pID);
+  Serial.print(F("Component Firmware Major Revision: 0x"));
+  Serial.println(response[6], HEX);
+  Serial.print(F("Component Firmware Minor Revision: 0x"));
+  Serial.println(response[7], HEX);
+  Serial.print("Chip Revision: 0x");
+  Serial.println(response[8], HEX);
+  Serial.println(F(""));
 } 
 //
 //  Powers up the Si4707 and uploads a patch.
@@ -724,32 +745,6 @@ void SI4707::readBurst(int quantity)
   intStatus = response[0];
   delay(CMD_DELAY);
 }
-//
-/*  Interrupt 0 or 4 Service Routine - Triggered on the Falling edge.
-//
-#if defined (__AVR_ATmega168__) || defined (__AVR_ATmega328P__)     //  Interrupt 0.
-ISR(INT0_vect)
-#elif defined (__AVR_ATmega1280__) || defined (__AVR_ATmega2560__)  //  Interrupt 4.
-ISR(INT4_vect)
-#endif
-{
-  intStatus |= INTAVL;
-}
-//
-//  Timer 1 Compare Match A Interrupt Service Routine -  Increments every 1 second.
-//
-ISR(TIMER1_COMPA_vect, ISR_NOBLOCK)
-{
-  sreg = SREG;
-  
-  timer++;
-  
-  if (timer >= SAME_TIME_OUT)
-    Radio.sameFlush();
-  
-  SREG = sreg;
-}  */
-//
 //
 //
 SI4707 Radio;
