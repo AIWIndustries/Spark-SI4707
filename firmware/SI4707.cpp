@@ -178,7 +178,7 @@ void SI4707::getRevision(void)
   Serial.println(response[3], HEX);
   uint16_t pID = (response[4] << 8 | response[5]);
   Serial.print(F("Patch ID: 0x"));
-  Serial.println(pID);
+  Serial.println(pID, HEX);
   Serial.print(F("Component Firmware Major Revision: 0x"));
   Serial.println(response[6], HEX);
   Serial.print(F("Component Firmware Minor Revision: 0x"));
