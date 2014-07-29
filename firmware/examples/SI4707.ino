@@ -9,8 +9,6 @@
   You must set your own startup frequency in setup().
   You must enable the interrupts that you want in setup().
   
-  I've added some Spark D7 LED operations just so I know how far the code is getting during setup while testing.
-  
 */
 #include "SI4707.h"
 //
@@ -23,37 +21,36 @@ byte function = 0x00;           //  Function to be performed.
 void setup()
 {
   delay(100);
-  Serial.begin(115200);
+  Serial.begin(9600);
+  
+  /**If debugging via USB Serial, enable the while statement and then connect to serial port and hit enter for program to start**/
+  
+  while(!Serial.available()) // Just chill until we Rx a character. Don't chill
+  {
+    delay(100);
+  }
+  /******************************************************************************************************************************/
   delay(100);
   Serial.println(F("Starting up the Si4707......."));
-  Serial.println();
-  delay(1000);
+  Serial.println(F(""));
+  delay(10);
   pinMode(D7, OUTPUT);                         
   digitalWrite(D7, HIGH);                        
-  digitalWrite(D7, LOW);
-  showMenu();
-  delay(1000);
+  delay(10);
   noInterrupts();
   Radio.begin();
-  digitalWrite(D7, HIGH);                      
-  delay(500); 
-  digitalWrite(D7, LOW);
   interrupts();
-  delay(20);
+  delay(10);
   Wire.begin();
-  delay(20);
+  delay(10);
   Radio.patch();          //  Use this one to to include the 1050 Hz patch.
-  digitalWrite(D7, HIGH);                         
-  delay(500); 
-  digitalWrite(D7, LOW);
   //Radio.on();           //  Use this one if not using the patch.
-  delay(500);
-  //Radio.getRevision();  //  Only captured on the logic analyzer - not displayed.
+  Radio.getRevision();  //  Only captured on the logic analyzer - not displayed.
+  showMenu();
 //  
 //  All useful interrupts are enabled here.
 //
   Radio.setProperty(GPO_IEN, (CTSIEN | ERRIEN | RSQIEN | SAMEIEN | ASQIEN | STCIEN));
-  delay(500);
 //  
 //  RSQ Interrupt Sources.
 //
@@ -66,24 +63,22 @@ void setup()
 //  SAME Interrupt Sources.
 //
   Radio.setProperty(WB_SAME_INTERRUPT_SOURCE, (EOMDETIEN | HDRRDYIEN));
-  delay(500);
 //
 //  ASQ Interrupt Sources.
 //
   Radio.setProperty(WB_ASQ_INT_SOURCE, (ALERTOFIEN | ALERTONIEN));
-  delay(500);
 //
 //  Tune to the desired frequency.
 //
-  attachInterrupt(D2, getStatus, FALLING);
-  digitalWrite(D7, HIGH);                       
-  delay(500); 
-  digitalWrite(D7, LOW);
-  delay(1000);
+  delay(250);
   Radio.tune(162550);  //  6 digits only.
-  delay(500);
-  digitalWrite(D7, HIGH);                       
-  attachInterrupt(D2, getStatus, FALLING);
+  
+  delay(250);
+  digitalWrite(D7, LOW);
+  delay(250);
+  attachInterrupt(INT, intSet, FALLING);
+  //delay(250);
+  
 }  
 //
 //  Main Loop.
@@ -303,14 +298,14 @@ void getFunction()
 void showMenu()
 {
   Serial.println();
-  Serial.println(F("Display this menu =\t 'h' or '?'"));
-  Serial.println(F("Channel down =\t\t 'd'"));
-  Serial.println(F("Channel up =\t\t 'u'"));
-  Serial.println(F("Scan =\t\t\t 's'"));
-  Serial.println(F("Volume - =\t\t '-'"));
-  Serial.println(F("Volume + =\t\t '+'"));
-  Serial.println(F("Mute / Unmute =\t\t 'm'"));
-  Serial.println(F("On / Off =\t\t 'o'"));
+  Serial.println(F("Display this menu = 'h' or '?'"));
+  Serial.println(F("Channel down =      'd'"));
+  Serial.println(F("Channel up =        'u'"));
+  Serial.println(F("Scan =              's'"));
+  Serial.println(F("Volume - =          '-'"));
+  Serial.println(F("Volume + =          '+'"));
+  Serial.println(F("Mute / Unmute =     'm'"));
+  Serial.println(F("On / Off =          'o'"));
   Serial.println();
 }  
 //
@@ -322,6 +317,11 @@ void printHex(byte value)
   Serial.print(value >> 4 & 0x0F, HEX);
   Serial.print(value >> 0 & 0x0F, HEX);
   Serial.print("  ");
+}
+
+void intSet()
+{
+    intStatus |= INTAVL;
 }
 //
 //  The End.
