@@ -2,7 +2,7 @@
   Si4707.h - Arduino library for controling the Silicon Labs Si4707 in I2C mode.
   
   Copyright 2013 by Ray H. Dees
-  Copyright 2013 by Richard Vogel
+  Copyright 2013 by AIW Industries, LLC
   
   This program is free software: you can redistribute it and/or modify 
   it under the terms of the GNU General Public License as published by 
